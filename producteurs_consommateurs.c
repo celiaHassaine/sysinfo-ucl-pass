@@ -20,9 +20,6 @@ sem_t empty;
 sem_t full;
 int BUFFER[N];
 
-/*pthread_mutex_init(&mutex, NULL);
-sem_init(&empty, 0 , N);  // buffer vide
-sem_init(&full, 0 , 0);   // buffer vide*/
 int number_prod = 0;
 int number_cons = 0;
 
