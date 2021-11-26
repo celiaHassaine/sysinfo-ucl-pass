@@ -25,14 +25,18 @@ val=1
             for ((repeat=0; repeat<5; repeat++))
             do
                 temps=$(/usr/bin/time -f "%e" ./prod $val $val 2>&1|tail -n 1)
-                moyenne_prod="$(echo "$moyenne_prod+$temps" | bc)$(echo "$moyenne_prod+$temps" | bc -l)"
-                echo $moyenne_prod
+                moyenne_prod=$(echo "$moyenne_prod+$temps" | bc -l)
                 string_fin="$string_fin,$temps"
             done
+
+            #getting the average time out of 5
             moyenne_prod=$(echo "$moyenne_prod/5" | bc -l);
-            moyenne_prod=$(printf ",%.2f" $moyenne_prod)
+            moyenne_prod=","${moyenne_prod:1}
+            moyenne_prod="0$moyenne_prod"
+            moyenne_prod=$(printf "%.3f" $moyenne_prod)
+
+
             string_fin="$string_fin,$moyenne_prod"
-            echo $string_fin
             echo $string_fin >> mesures_${prog_names[$i]}.csv
         #fi
         #if (${prog_names[$i]} == "prod") 
