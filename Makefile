@@ -1,14 +1,14 @@
-all: benchmarks_normal 
-	./bash_scripts/benchmarks_spinlock.sh
+all: perfo_normal
+	./part_1/perfo.sh
 
-benchmarks_normal:
-	./bash_scripts/benchmarks.sh 
+perfo_normal:
+	./part_1/perfo.sh
 
-benchmarks_spinlock:
-	./bash_scripts/benchmarks_spinlock.sh
+#perfo_spinlock:
+#	./bash_scripts/perfo_spinlock.sh
 
-benchmarks_tas:
-	./bash_scripts/benchmarks_tas.sh
+#perfo_tas:
+#	./bash_scripts/perfo_tas.sh
 
 philo: 
 	gcc -pthread part_1/philosophes.c -lpthread -o philo
@@ -20,40 +20,40 @@ prod:
 	gcc -pthread part_1/producteurs_consommateurs.c -lpthread -o prod
 
 
-philo_spinlock:
-	gcc -pthread philos/philo_with_spinlocks.c spinlocks.c -lpthread -lm -o philo_spinlock
+#philo_spinlock:
+#	gcc -pthread philos/philo_with_spinlocks.c spinlocks.c -lpthread -lm -o philo_spinlock
 
-reader_spinlock:
-	gcc -pthread read-writers/readers-writers_with_spinlock.c spinlocks.c -lm -lpthread -o reader_spinlock
+#reader_spinlock:
+#	gcc -pthread read-writers/readers-writers_with_spinlock.c spinlocks.c -lm -lpthread -o reader_spinlock
 
-prod_spinlock:
-	gcc -pthread prod-consom/prod-consom_with_spinlocks.c spinlocks.c -lm -lpthread -o prod_spinlock 
-
-
-test_and_set:
-	gcc -pthread spinlocks/test-and-set.c -lpthread -o test_and_set
-
-test_test_and_set:
-	gcc -pthread spinlocks/test-test-and-set.c -lpthread -o test_test_and_set
-
-backoff_test_test_and_set:
-	gcc -pthread spinlocks/backoff-test-test-and-set.c -lpthread -lm -o backoff_test_test_and_set
+#prod_spinlock:
+#	gcc -pthread prod-consom/prod-consom_with_spinlocks.c spinlocks.c -lm -lpthread -o prod_spinlock
 
 
-graphs: graph_normal
-	python3 python_scripts/plots_spinlock.py
+#test_and_set:
+#	gcc -pthread spinlocks/test-and-set.c -lpthread -o test_and_set
 
-graph_spinlock:
-	python3 python_scripts/plots_spinlock.py
+#test_test_and_set:
+#	gcc -pthread spinlocks/test-test-and-set.c -lpthread -o test_test_and_set
 
-graph_both:
-	python3 python_scripts/plots_both.py
+#backoff_test_test_and_set:
+#	gcc -pthread spinlocks/backoff-test-test-and-set.c -lpthread -lm -o backoff_test_test_and_set
+
+
+#graphs: graph_normal
+#	python3 python_scripts/plots_spinlock.py
+
+#graph_spinlock:
+#	python3 python_scripts/plots_spinlock.py
+
+#graph_both:
+#	python3 python_scripts/plots_both.py
 
 graph_normal: 
 	python3 graphs/graph.py
 
-graph_tas:
-	python3 python_scripts/plots_tas.py
+#graph_tas:
+#	python3 python_scripts/plots_tas.py
   
 
 
