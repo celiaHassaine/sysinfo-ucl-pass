@@ -1,5 +1,6 @@
 all: perfo_normal
 	./part_1/perfo.sh
+	python3 graphs/graph.py
 
 perfo_normal:
 	./part_1/perfo.sh
