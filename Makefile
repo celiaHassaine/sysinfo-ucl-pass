@@ -11,13 +11,13 @@ benchmarks_tas:
 	./bash_scripts/benchmarks_tas.sh
 
 philo: 
-	gcc -pthread philosophes.c -lpthread -o philo
+	gcc -pthread part_1/philosophes.c -lpthread -o philo
 
 reader:
-	gcc -pthread writers_readers.c -lpthread -o reader
+	gcc -pthread part_1/writers_readers.c -lpthread -o reader
 
 prod:
-	gcc -pthread producteurs_consommateurs.c -lpthread -o prod
+	gcc -pthread part_1/producteurs_consommateurs.c -lpthread -o prod
 
 
 philo_spinlock:
