@@ -50,7 +50,7 @@ graph_both:
 	python3 python_scripts/plots_both.py
 
 graph_normal: 
-	python3 python_scripts/plots.py
+	python3 graphs/graph.py
 
 graph_tas:
 	python3 python_scripts/plots_tas.py
