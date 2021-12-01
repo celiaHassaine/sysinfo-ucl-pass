@@ -57,7 +57,7 @@ void* philosophe ( void* arg ){
 
 int main(int argc, char *argv[]){
     
-    PHILOSOPHES = atoi(argv[0]);
+    PHILOSOPHES = atoi(argv[1]);
     phil = malloc(PHILOSOPHES*sizeof(pthread_t));
     baguette = malloc(PHILOSOPHES*sizeof(pthread_mutex_t));
     int id[PHILOSOPHES];

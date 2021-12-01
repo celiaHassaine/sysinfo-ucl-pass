@@ -73,3 +73,4 @@ clean:
 	-@rm test_test_and_set
 	-@rm semaphore
 	-@rm backoff_test_test_and_set
+	-rm graphs/*.png

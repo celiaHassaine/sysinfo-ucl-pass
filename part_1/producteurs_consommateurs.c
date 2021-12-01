@@ -89,7 +89,6 @@ void *consumer()
 			sem_post(&full);
 			return NULL;
 		}
-		printf("\n %d \n", BUFFER[index_read]);
 		while (rand() > RAND_MAX / 10000)
 			;
 		index_read = (index_read + 1) % 8;

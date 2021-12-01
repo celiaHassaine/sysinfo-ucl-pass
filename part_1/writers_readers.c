@@ -85,8 +85,8 @@ void *reader (){
 }
 
 int main(int argc, char *argv[]){
-    WRITERS = atoi(argv[0]);
-    READERS = atoi(argv[1]);
+    WRITERS = atoi(argv[1]);
+    READERS = atoi(argv[2]);
     writers = malloc(WRITERS*sizeof(pthread_t));
     readers = malloc(READERS*sizeof(pthread_t));
     int err;
