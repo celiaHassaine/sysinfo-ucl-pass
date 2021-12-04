@@ -12,24 +12,26 @@ int l= 0; //lock ==0
 int N; //Nombre de threads
 
 //Fonction lock
-void lock(void){
+void lock(int volatile *verrou){
     int t=1;
+    printf("hello");
     while(t == 1){
         printf("t = %d\n", t);
-        asm volatile ("movl %1, %%eax;"
-        "xchgl %%eax, %0;"
-        :"=m" (l)
-        :"m" (t)
+        asm volatile ("movl $1, %%eax;"
+        "xchgl %%eax, %1;"
+        "movl %%eax, %0"
+        :"=m" (t)
+        :"m" (verrou)
         :"%eax"
         );
     }
 }
 //Fonction unlock
-void unlock(void){
+void unlock(int volatile *verrou){
     int t=0;
-    asm ("movl %0, %%eax;"   
+    asm ("movl $0, %%eax;"   
         "xchgl %%eax, %1;"
-        :"=m" (l)
+        :"=m" (verrou)
         :"m" (t)
         :"%eax"
     );
@@ -40,12 +42,13 @@ void test_and_set(void){
     printf("okay\n");
 	
 	int count = 0;
+    int volatile *verrou = 0;
 	
 	while(count < 6400/N){
-	    lock();
+	    lock(verrou);
 	
 	    while(rand() > RAND_MAX/10000){}
-	    unlock();
+	    unlock(verrou);
 	    count ++;
     }
 }
