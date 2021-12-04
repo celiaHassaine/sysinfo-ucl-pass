@@ -28,12 +28,6 @@ do
             prod_writer=$(echo "($t-1)/2" | bc)
             cons_reader=$(echo "($t+1)/2" | bc)
         fi
-        echo "t"
-        echo $t
-        echo "prod_writer"
-        echo $prod_writer
-        echo "cons_reader"
-        echo $cons_reader
         string_fin="$t"
         moyenne=0
         if ((${prog_names[$i]} == "prod"))

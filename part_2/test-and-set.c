@@ -15,6 +15,7 @@ int N; //Nombre de threads
 void lock(void){
     int t=1;
     while(t == 1){
+        printf("t = %d\n", t);
         asm volatile ("movl %1, %%eax;"
         "xchgl %%eax, %0;"
         :"=m" (l)
@@ -36,6 +37,7 @@ void unlock(void){
 
 //Fonction pour testterle lock et unlock
 void test_and_set(void){
+    printf("okay\n");
 	
 	int count = 0;
 	
@@ -43,17 +45,19 @@ void test_and_set(void){
 	    lock();
 	
 	    while(rand() > RAND_MAX/10000){}
-	        unlock();
-	    count ++;}
-	}
+	    unlock();
+	    count ++;
+    }
+}
 
 int main(int argc, char *argv[]){
 	N = atoi(argv[1]);
 	pthread_t threads[N]; //ON crée la tableeau de threads
+    printf("argument: %d\n", N);
 	for(int i = 0; i<N; i++){
 		pthread_create(&threads[i],NULL,(void *) test_and_set,NULL);
-		}
+	}
 	for(int i = 0; i<N; i++){
 		pthread_join(threads[i],NULL);
-		}
 	}
+}

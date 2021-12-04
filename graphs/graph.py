@@ -1,10 +1,7 @@
 #!/usr/bin/env python3
-from os import sep
 import matplotlib.pyplot as plt
-from numpy.core.fromnumeric import prod
 import pandas as pd
 import numpy as np
-import os
 
 def get_std(array):
     arr = [0] * 8

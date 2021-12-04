@@ -8,8 +8,8 @@ perfo_normal:
 #perfo_spinlock:
 #	./bash_scripts/perfo_spinlock.sh
 
-#perfo_tas:
-#	./bash_scripts/perfo_tas.sh
+perfo_tas:
+	./part_2/perfo_TAS.sh
 
 philo: 
 	gcc -pthread part_1/philosophes.c -lpthread -o philo
@@ -31,11 +31,11 @@ prod:
 #	gcc -pthread prod-consom/prod-consom_with_spinlocks.c spinlocks.c -lm -lpthread -o prod_spinlock
 
 
-#test_and_set:
-#	gcc -pthread spinlocks/test-and-set.c -lpthread -o test_and_set
+test_and_set:
+	gcc -pthread part_2/test-and-set.c -lpthread -o test_and_set
 
-#test_test_and_set:
-#	gcc -pthread spinlocks/test-test-and-set.c -lpthread -o test_test_and_set
+test_test_and_set:
+	gcc -pthread part_2/test-test-and-set.c -lpthread -o test_test_and_set
 
 #backoff_test_test_and_set:
 #	gcc -pthread spinlocks/backoff-test-test-and-set.c -lpthread -lm -o backoff_test_test_and_set
@@ -53,8 +53,8 @@ prod:
 graph_normal: 
 	python3 graphs/graph.py
 
-#graph_tas:
-#	python3 python_scripts/plots_tas.py
+graph_tas:
+	python3 graphs/graph_test_and_set.py
   
 
 
