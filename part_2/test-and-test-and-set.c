@@ -11,6 +11,10 @@
 int l= 0; //lock ==0 
 int N; //Nombre de threads
 
+void init_lock(int volatile *verrou){
+    *verrou = 0;
+}
+
 //Fonction lock
 void lock(int volatile *verrou){
     int t=1;
@@ -36,17 +40,18 @@ void unlock(int volatile *verrou){
     );
 }
 
+int volatile verrou;
+
 //Fonction pour testterle lock et unlock
 void test_and_set(void){
 	
 	int count = 0;
-    int volatile *verrou = 0;
 	
 	while(count < 6400/N){
-	    lock(verrou);
+	    lock(&verrou);
 	
 	    while(rand() > RAND_MAX/10000){}
-	    unlock(verrou);
+	    unlock(&verrou);
 	    count ++;}
 	}
 
