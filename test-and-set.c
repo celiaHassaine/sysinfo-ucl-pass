@@ -35,7 +35,7 @@ void unlock(void){
 }
 
 //Fonction pour testterle lock et unlock
-void section_critique(void){
+void test_and_set(void){
 	
 	int count = 0;
 	
@@ -51,7 +51,7 @@ int main(int argc, char *argv[]){
 	N = atoi(argv[1]);
 	pthread_t threads[N]; //ON crée la tableeau de threads
 	for(int i = 0; i<N; i++){
-		pthread_create(&threads[i],NULL,(void *) section_critique,NULL);
+		pthread_create(&threads[i],NULL,(void *) test_and_set,NULL);
 		}
 	for(int i = 0; i<N; i++){
 		pthread_join(threads[i],NULL);
