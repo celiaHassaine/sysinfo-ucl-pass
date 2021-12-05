@@ -67,6 +67,7 @@ clean_csv:
 
 clean:
 	-@rm prod
+	-@rm sema
 	-@rm reader
 	-@rm philo
 	-@rm philo_spinlock

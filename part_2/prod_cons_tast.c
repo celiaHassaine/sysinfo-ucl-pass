@@ -6,7 +6,7 @@
 #include <math.h>
 #include <errno.h>
 #include <string.h>
-#include "test-and-set.c"
+#include "tast_ttas_util.h"
 
 // Initialisation
 #define MIN_INT -2147483648
@@ -17,12 +17,13 @@
 #define false 0
 
 pthread_mutex_t mutex;
-sem_t empty;
-sem_t full;
+sem empty;
+sem full;
 int BUFFER[N];
 
 int number_prod = 0;
 int number_cons = 0;
+int volatile verrou;
 
 void error(int err, char *msg)
 {
@@ -37,31 +38,31 @@ void *producer()
 	int index_write = 0;
 	while (true)
 	{
-		pthread_mutex_lock(&mutex);
+		lock(&mutex);
 		// section critique
 		if (number_prod == 1024)
 		{
-			pthread_mutex_unlock(&mutex);
-			sem_post(&empty);
+			unlock(&verrou);
+			semaphore_post(&empty);
 			return NULL;
 		}
 
-		pthread_mutex_unlock(&mutex);
+		unlock(&verrou);
 		item = MIN_INT + rand() % (MAX_INT - MIN_INT + 1);
-		sem_wait(&empty); // attente d'une place libre
-		pthread_mutex_lock(&mutex);
+		semaphore_wait(&empty); // attente d'une place libre
+		lock(&verrou);
 		// section critique
 		if (number_prod == 1024)
 		{
-			pthread_mutex_unlock(&mutex);
-			sem_post(&empty);
+			unlock(&verrou);
+			semaphore_post(&empty);
 			return NULL;
 		}
 		BUFFER[index_write] = item;
 		index_write = (index_write + 1) % 8;
 		number_prod++;
-		pthread_mutex_unlock(&mutex);
-		sem_post(&full); // il y a une place remplie en plus
+		unlock(&verrou);
+		semaphore_post(&full); // il y a une place remplie en plus
 	}
 }
 
@@ -72,30 +73,30 @@ void *consumer()
 	int index_read = 0;
 	while (true)
 	{
-		pthread_mutex_lock(&mutex);
+		lock(&mutex);
 		// section critique
 		if (number_cons == 1024)
 		{
-			pthread_mutex_unlock(&mutex);
-			sem_post(&full);
+			unlock(&verrou);
+			semaphore_post(&full);
 			return NULL;
 		}
-		pthread_mutex_unlock(&mutex);
-		sem_wait(&full); // attente d'une place remplie
-		pthread_mutex_lock(&mutex);
+		unlock(&verrou);
+		semaphore_wait(&full); // attente d'une place remplie
+		lock(&verrou);
 		// section critique
 		if (number_cons == 1024)
 		{
-			pthread_mutex_unlock(&mutex);
-			sem_post(&full);
+			unlock(&verrou);
+			semaphore_post(&full);
 			return NULL;
 		}
 		while (rand() > RAND_MAX / 10000)
 			;
 		index_read = (index_read + 1) % 8;
 		number_cons++;
-		pthread_mutex_unlock(&mutex);
-		sem_post(&empty); // il y a une place libre en plus
+		unlock(&verrou);
+		semaphore_post(&empty); // il y a une place libre en plus
 	}
 }
 
@@ -114,10 +115,10 @@ int main(int argc, char **argv)
 	int arg_producteur[nbr_producteur];
 	int arg_consommateur[nbr_consommateur];
 
-	pthread_mutex_init(&mutex, NULL);
+	semaphore_init(&verrou, 0);
 
-	sem_init(&empty, 0, N); // buffer vide
-	sem_init(&full, 0, 0);	// buffer vide
+	semaphore_init(&empty, 0); // buffer vide
+	semaphore_init(&full, 0);	// buffer vide
 
 	err_mutex = pthread_mutex_init(&mutex, NULL);
 	if (err_mutex != 0)

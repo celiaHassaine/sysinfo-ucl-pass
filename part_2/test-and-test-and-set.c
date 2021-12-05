@@ -18,8 +18,9 @@ void init_lock(int volatile *verrou){
 //Fonction lock
 void lock(int volatile *verrou){
     int t=1;
-    while(t == 1)
-        while(verrou==1){};
+    printf("verrou: %d", *verrou);
+    while(t == 1){
+        while(*verrou==1){};
         asm volatile ("movl $1, %%eax;"
         "xchgl %%eax, %1;"
         "movl %%eax, %0"
@@ -29,6 +30,7 @@ void lock(int volatile *verrou){
         );
     }
 }
+
 //Fonction unlock
 void unlock(int volatile *verrou){
     int t=0;

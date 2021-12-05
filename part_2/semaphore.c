@@ -7,8 +7,7 @@
 #include <semaphore.h>
 #include <errno.h>
 #include <string.h>
-
-int N; //Nombre de threads
+#include "tast_ttas_util.h>"
 
 // Functions from test and test and set.c
 
@@ -19,7 +18,6 @@ void init_lock(int volatile *verrou){
 //Fonction lock
 void lock(int volatile *verrou){
     int t=1;
-    printf("verrou == %d", *verrou);
     while(t == 1){
         while(*verrou==1){};
         asm volatile ("movl $1, %%eax;"
@@ -52,7 +50,7 @@ typedef struct semaphore
 sem *sema;
 
 
-int semaphore_init(sem* s, int v){
+int semaphore_init(sem *s, int v){
     /*
     *s= malloc(sizeof(sem)); //Alloue de la place en mémoire pour notre sémaphore
     if(*s==NULL){
@@ -63,34 +61,35 @@ int semaphore_init(sem* s, int v){
     *((**s).verrou) = 0;
     return 0;*/
 	s->val = v;
-	init_lock(s->verrou);
+	init_lock(&(s->verrou));
 }
 
 
-void semaphore_wait(sem* s){
+void semaphore_wait(sem *s){
     while(s->val <= 0);
-	lock(s->verrou);
+	lock(&(s->verrou));
 	s->val--;
-	unlock(s->verrou);
+	unlock(&(s->verrou));
 }
 
 
-void semaphore_post(sem* s){
-    lock(s->verrou);
+void semaphore_post(sem *s){
+    lock(&(s->verrou));
     s->val = s->val+1; //Incrémente la valeur du sémaphore
-    unlock(s->verrou);
+    unlock(&(s->verrou));
 }
 
 
 
-void semaphore_destroy(sem* s){
-    free(s->verrou);
+void semaphore_destroy(sem *s){
+    free(&(s->verrou));
     free(s);
 }
 
-int volatile verrou;
+/*
 
-//Fonction pour testterle lock et unlock
+int N; //Nombre de threads
+
 void test_and_set_sem(void){
 	
 	int count = 0;
@@ -111,9 +110,11 @@ void test_and_set_sem(void){
 }
 
 void main(int argc, char *argv[]){
+    printf("HERE\n");
 	N = atoi(argv[1]);
 	pthread_t threads[N]; //ON crée la tableeau de threads
     sema=(sem *)malloc(sizeof(sem));
+    printf("%d\n%d\n", sema->val, &(sema->verrou));
     semaphore_init(sema, 0);
 	for(int i = 0; i<N; i++){
 		pthread_create(&threads[i],NULL,(void *) test_and_set_sem,NULL);
@@ -121,5 +122,5 @@ void main(int argc, char *argv[]){
 	for(int i = 0; i<N; i++){
 		pthread_join(threads[i],NULL);
 	}
-    free(sema);
-}
+    semaphore_destroy(sema);
+}*/

@@ -18,9 +18,9 @@ void init_lock(int volatile *verrou){
 //Fonction lock
 void lock(int volatile *verrou){
     int t=1;
-    printf("hello");
+    printf("hello\n");
     while(t == 1){
-        printf("t = %d\n", t);
+        printf("t = %d\n", *verrou);
         asm volatile ("movl $1, %%eax;"
         "xchgl %%eax, %1;"
         "movl %%eax, %0"
