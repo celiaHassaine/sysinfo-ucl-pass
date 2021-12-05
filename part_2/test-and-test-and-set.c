@@ -52,8 +52,9 @@ void test_and_test_and_set(void){
 	
 	    while(rand() > RAND_MAX/10000){}
 	    unlock(&verrou);
-	    count ++;}
-	}
+	    count ++;
+    }
+}
 
 int main(int argc, char *argv[]){
 	N = atoi(argv[1]);
@@ -63,5 +64,5 @@ int main(int argc, char *argv[]){
 		}
 	for(int i = 0; i<N; i++){
 		pthread_join(threads[i],NULL);
-		}
 	}
+}

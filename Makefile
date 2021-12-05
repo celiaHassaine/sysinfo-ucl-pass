@@ -37,6 +37,9 @@ test_and_set:
 test_test_and_set:
 	gcc -pthread part_2/test-test-and-set.c -lpthread -o test_test_and_set
 
+sema:
+	gcc -pthread part_2/semaphore.c -lpthread -o sema
+
 #backoff_test_test_and_set:
 #	gcc -pthread spinlocks/backoff-test-test-and-set.c -lpthread -lm -o backoff_test_test_and_set
 
