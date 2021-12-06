@@ -11,6 +11,8 @@
 
 // Functions from test and test and set.c
 
+sem *sema;
+
 
 void init_lock(int volatile *verrou){
     *verrou = 0;
@@ -25,7 +27,7 @@ void lock(int volatile *verrou){
         "xchgl %%eax, %1;"
         "movl %%eax, %0"
         :"=m" (t)
-        :"m" (verrou)
+        :"m" (verrou)   
         :"%eax"
         );
     }
@@ -42,20 +44,10 @@ void unlock(int volatile *verrou){
     );
 }
 
-sem *sema;
 
-
-int semaphore_init(sem **s, int v){
-    //int volatile *test = s->verrou;
-    
-    *s = malloc(sizeof(struct semaphore)); //Alloue de la place en mémoire pour notre sémaphore
-    if(*s==NULL){
-        return -1;
-    }
-    (*s)->val = v;
-    (**s).verrou = malloc(sizeof(int));
-    *((**s).verrou) = 0;
-    init_lock((*s)->verrou);
+int semaphore_init(sem *s, int v){
+    s->val=v;
+    init_lock(s->verrou);
     return 0;
 }
 
@@ -63,7 +55,7 @@ int semaphore_init(sem **s, int v){
 void semaphore_wait(sem *s){
     int volatile *test = s->verrou;
     while(s->val <= 0);
-    printf("%ls\n", test);
+    //printf("%ls\n", test);
 	lock(test);
 	s->val--;
 	unlock(test);
@@ -111,14 +103,16 @@ void main(int argc, char *argv[]){
     printf("HERE\n");
 	N = atoi(argv[1]);
 	pthread_t threads[N]; //ON crée la tableeau de threads
-    sema=malloc(sizeof(struct semaphore));
+    printf("trying malloc\n");
+    sema=malloc(sizeof(sem));
+    (*sema).verrou = malloc(sizeof(int volatile));
+    semaphore_init(sema, 0);
     printf("%d\n%d\n", sema->val, *(sema->verrou));
-    /*semaphore_init(sema, 0);
 	for(int i = 0; i<N; i++){
 		pthread_create(&threads[i],NULL,(void *) test_and_set_sem,NULL);
 		}
 	for(int i = 0; i<N; i++){
 		pthread_join(threads[i],NULL);
-	}*/
+	}
     semaphore_destroy(sema);
 }
