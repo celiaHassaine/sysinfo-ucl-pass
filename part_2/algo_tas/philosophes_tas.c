@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <errno.h>
 #include <string.h>
+#include "semaphore_tas.h"
 
 
 #define CYCLES 10000
@@ -17,38 +18,6 @@ void error(int err, char *msg) {
   fprintf(stderr,"%s a retourné %d, message d'erreur : %s\n",msg,err,strerror(errno));
   exit(EXIT_FAILURE);
 }
-
-void init_lock(int volatile *verrou){
-    *verrou = 0;
-}
-
-//Fonction lock
-void lock(int volatile *verrou){
-    int t=1;
-    printf("hello\n");
-    while(t == 1){
-        printf("t = %d\n", *verrou);
-        asm volatile ("movl $1, %%eax;"
-        "xchgl %%eax, %1;"
-        "movl %%eax, %0"
-        :"=m" (t)
-        :"m" (verrou)
-        :"%eax"
-        );
-    }
-}
-//Fonction unlock
-void unlock(int volatile *verrou){
-    int t=0;
-    asm ("movl $0, %%eax;"   
-        "xchgl %%eax, %1;"
-        :"=m" (verrou)
-        :"m" (t)
-        :"%eax"
-    );
-}
-
-
 
 void mange(int id) {
   //philosophe mange

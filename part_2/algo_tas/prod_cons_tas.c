@@ -6,7 +6,7 @@
 #include <math.h>
 #include <errno.h>
 #include <string.h>
-#include "semaphore.h"
+#include "semaphore_tas.h"
 
 // Initialisation
 #define MIN_INT -2147483648
@@ -33,22 +33,29 @@ void error(int err, char *msg)
 // Producteur
 void *producer()
 {
+	printf("dans producer\n");
 	int item;
 	int index_write = 0;
 	while (true)
 	{
 		lock(&verrou);
+		printf("dans lock = %d\n", verrou);
 		// section critique
 		if (number_prod == 1024)
 		{
+		printf("dans lock = %d\n", verrou);
 			unlock(&verrou);
+		printf("dans lock\n");
 			semaphore_post(empty);
 			return NULL;
 		}
+		printf("dans lock = %d\n", verrou);
 
 		unlock(&verrou);
+		printf("dans lock = %d\n", verrou);
 		item = MIN_INT + rand() % (MAX_INT - MIN_INT + 1);
 		semaphore_wait(empty); // attente d'une place libre
+		printf("dans lock = %d\n", verrou);
 		lock(&verrou);
 		// section critique
 		if (number_prod == 1024)
@@ -68,6 +75,7 @@ void *producer()
 // Consomateur
 void *consumer()
 {
+	printf("dans consumer\n");
 	int item;
 	int index_read = 0;
 	while (true)
@@ -101,8 +109,7 @@ void *consumer()
 
 int main(int argc, char **argv)
 {
-	printf("hi\n");
-	/*int err_consommateur;
+	int err_consommateur;
 	int err_producteur;
 
 	int nbr_producteur = atoi(argv[1]);
@@ -113,11 +120,14 @@ int main(int argc, char **argv)
 
 	int arg_producteur[nbr_producteur];
 	int arg_consommateur[nbr_consommateur];
-	printf("hi\n");
 
 	init_lock(&verrou);
 
-	semaphore_init(empty, 0); // buffer vide
+    empty=malloc(sizeof(sem));
+    (*empty).verrou = malloc(sizeof(int volatile));
+    full=malloc(sizeof(sem));
+    (*full).verrou = malloc(sizeof(int volatile));
+	semaphore_init(empty, N); // buffer vide
 	semaphore_init(full, 0);	// buffer vide
 
 	//creation des threads consommateurs
@@ -162,5 +172,5 @@ int main(int argc, char **argv)
 
 	semaphore_destroy(full);
 
-	return (EXIT_SUCCESS);*/
+	return (EXIT_SUCCESS);
 }

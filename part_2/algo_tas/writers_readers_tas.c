@@ -6,7 +6,7 @@
 //#include <semaphore.h>
 #include <errno.h>
 #include <string.h>
-#include "semaphore.h"
+#include "semaphore_tas.h"
 
 pthread_mutex_t m_reader;
 pthread_mutex_t m_writer;
@@ -78,7 +78,7 @@ void *reader (){
         readcount = readcount-1;
         if(readcount==0){
             //départ du dernier reader
-            sem_post(db_writers);
+            semaphore_post(db_writers);
         }
         pthread_mutex_unlock(&m_reader);
         reading = reading +1;
