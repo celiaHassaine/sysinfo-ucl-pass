@@ -21,14 +21,14 @@ prod:
 	gcc -pthread part_1/producteurs_consommateurs.c -lpthread -o prod
 
 
-#philo_spinlock:
-#	gcc -pthread philos/philo_with_spinlocks.c spinlocks.c -lpthread -lm -o philo_spinlock
+philo_ttas:
+	gcc -pthread part_2/philosophe_ttas.c part_2/semaphore.c -lpthread -lm -o philo_ttas
 
-#reader_spinlock:
-#	gcc -pthread read-writers/readers-writers_with_spinlock.c spinlocks.c -lm -lpthread -o reader_spinlock
+reader_ttas:
+	gcc -pthread part_2/writers_readers_ttas.c part_2/semaphore.c -lm -lpthread -o reader_ttas
 
-#prod_spinlock:
-#	gcc -pthread prod-consom/prod-consom_with_spinlocks.c spinlocks.c -lm -lpthread -o prod_spinlock
+prod_ttas:
+	gcc -pthread part_2/prod_cons_ttas.c part_2/semaphore.c -lm -lpthread -o prod_ttas
 
 
 test_and_set:

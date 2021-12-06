@@ -7,7 +7,7 @@
 #include <semaphore.h>
 #include <errno.h>
 #include <string.h>
-#include "tast_ttas_util.h>"
+#include "semaphore.h"
 
 // Functions from test and test and set.c
 
@@ -41,16 +41,11 @@ void unlock(int volatile *verrou){
     );
 }
 
-typedef struct semaphore
-{
-    int val; //valeur de la sémaphore
-    int volatile *verrou; //valeur du verrou pour faire l'attente active
-}sem;
-
 sem *sema;
 
 
 int semaphore_init(sem *s, int v){
+    int volatile *test = s->verrou;
     /*
     *s= malloc(sizeof(sem)); //Alloue de la place en mémoire pour notre sémaphore
     if(*s==NULL){
@@ -61,32 +56,35 @@ int semaphore_init(sem *s, int v){
     *((**s).verrou) = 0;
     return 0;*/
 	s->val = v;
-	init_lock(&(s->verrou));
+	init_lock(test);
 }
 
 
 void semaphore_wait(sem *s){
+    int volatile *test = s->verrou;
     while(s->val <= 0);
-	lock(&(s->verrou));
+    printf("%ls\n", test);
+	lock(test);
 	s->val--;
-	unlock(&(s->verrou));
+	unlock(test);
 }
 
 
 void semaphore_post(sem *s){
-    lock(&(s->verrou));
+    int volatile *test = s->verrou;
+    lock(test);
     s->val = s->val+1; //Incrémente la valeur du sémaphore
-    unlock(&(s->verrou));
+    unlock(test);
 }
 
 
 
 void semaphore_destroy(sem *s){
-    free(&(s->verrou));
+    /*int volatile *test = s->verrou;
+    free(&test);*/
     free(s);
 }
 
-/*
 
 int N; //Nombre de threads
 
@@ -95,17 +93,17 @@ void test_and_set_sem(void){
 	int count = 0;
 	
 	while(count < 6400/N){
-        printf("début sem value: %d\n", sema->val);
+        //printf("début sem value: %d\n", sema->val);
 		semaphore_post(sema);
-        printf("1 post sem value: %d\n", sema->val);
+        //printf("1 post sem value: %d\n", sema->val);
 		semaphore_wait(sema);
-        printf("1 post + 1 wait sem value: %d\n", sema->val);
+        //printf("1 post + 1 wait sem value: %d\n", sema->val);
 		while(rand() > RAND_MAX/10000);
 	    count ++;
 		semaphore_post(sema);
-        printf("1 post + 1 wait + 1 post sem value: %d\n", sema->val);
+        //printf("1 post + 1 wait + 1 post sem value: %d\n", sema->val);
 		semaphore_wait(sema);
-        printf("1 post + 1 wait + 1 post + 1 wait sem value: %d\n", sema->val);
+        //printf("1 post + 1 wait + 1 post + 1 wait sem value: %d\n", sema->val);
     }
 }
 
@@ -113,14 +111,14 @@ void main(int argc, char *argv[]){
     printf("HERE\n");
 	N = atoi(argv[1]);
 	pthread_t threads[N]; //ON crée la tableeau de threads
-    sema=(sem *)malloc(sizeof(sem));
-    printf("%d\n%d\n", sema->val, &(sema->verrou));
-    semaphore_init(sema, 0);
+    sema=malloc(sizeof(sem));
+    printf("%d\n%d\n", sema->val, *(sema->verrou));
+    /*semaphore_init(sema, 0);
 	for(int i = 0; i<N; i++){
 		pthread_create(&threads[i],NULL,(void *) test_and_set_sem,NULL);
 		}
 	for(int i = 0; i<N; i++){
 		pthread_join(threads[i],NULL);
-	}
+	}*/
     semaphore_destroy(sema);
-}*/
+}
