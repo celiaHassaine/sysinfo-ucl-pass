@@ -47,7 +47,7 @@ sem *sema;
 int semaphore_init(sem *s, int v){
     int volatile *test = s->verrou;
     /*
-    *s= malloc(sizeof(sem)); //Alloue de la place en mémoire pour notre sémaphore
+    *s= malloc(sizeof(struct sem)); //Alloue de la place en mémoire pour notre sémaphore
     if(*s==NULL){
         return -1;
     }
