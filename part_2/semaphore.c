@@ -11,6 +11,7 @@
 
 // Functions from test and test and set.c
 
+
 void init_lock(int volatile *verrou){
     *verrou = 0;
 }
@@ -44,19 +45,18 @@ void unlock(int volatile *verrou){
 sem *sema;
 
 
-int semaphore_init(sem *s, int v){
-    int volatile *test = s->verrou;
-    /*
-    *s= malloc(sizeof(struct sem)); //Alloue de la place en mémoire pour notre sémaphore
+int semaphore_init(sem **s, int v){
+    //int volatile *test = s->verrou;
+    
+    *s = malloc(sizeof(struct semaphore)); //Alloue de la place en mémoire pour notre sémaphore
     if(*s==NULL){
         return -1;
     }
     (*s)->val = v;
     (**s).verrou = malloc(sizeof(int));
     *((**s).verrou) = 0;
-    return 0;*/
-	s->val = v;
-	init_lock(test);
+    init_lock((*s)->verrou);
+    return 0;
 }
 
 
@@ -111,7 +111,7 @@ void main(int argc, char *argv[]){
     printf("HERE\n");
 	N = atoi(argv[1]);
 	pthread_t threads[N]; //ON crée la tableeau de threads
-    sema=malloc(sizeof(sem));
+    sema=malloc(sizeof(struct semaphore));
     printf("%d\n%d\n", sema->val, *(sema->verrou));
     /*semaphore_init(sema, 0);
 	for(int i = 0; i<N; i++){
