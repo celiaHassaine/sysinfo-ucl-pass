@@ -13,9 +13,11 @@ cons_reader=0
 
 for ((i=0; i<3; i++))
 do
+    echo ${prog_names[$i]}
 	echo "thread,sec_1,sec_2,sec_3,sec_4,sec_5,moyenne" >> mesures_${prog_names[$i]}.csv
     for ((t=1; t<($nbr_coeur*2)+1; t++))
     do
+        echo $t
         if (($t%2 == 0))
         then
             prod_writer=$(echo "$t/2" | bc)
@@ -30,27 +32,31 @@ do
         fi
         string_fin="$t"
         moyenne=0
-        if ((${prog_names[$i]} == "prod"))
+        if [ "${prog_names[$i]}" = "prod_TAS" ]
         then
             for ((repeat=0; repeat<5; repeat++))
             do
+                echo ${prog_names[$i]}
+                echo "here prod = $prod_writer,     cons = $cons_reader"
                 temps=$(/usr/bin/time -f "%e" ./prod_TAS $prod_writer $cons_reader 2>&1|tail -n 1)
                 moyenne=$(echo "$moyenne+$temps" | bc -l)
+                echo $temps
                 string_fin="$string_fin,$temps"
             done
-        elif ((${prog_names[$i]} == "reader"))
+        elif [ "${prog_names[$i]}" = "reader_TAS" ]
         then
             for ((repeat=0; repeat<5; repeat++))
             do
+                echo "here prod = $prod_writer,     cons = $cons_reader"
                 temps=$(/usr/bin/time -f "%e" ./reader_TAS $prod_writer $cons_reader 2>&1|tail -n 1)
                 moyenne=$(echo "$moyenne+$temps" | bc -l)
                 string_fin="$string_fin,$temps"
             done
-        elif ((${prog_names[$i]} == "philo"))
+        elif [ "${prog_names[$i]}" = "philo_TAS" ]
         then
             for ((repeat=0; repeat<5; repeat++))
             do
-                echo $prod_writer
+                echo "here prod = $prod_writer,     cons = $cons_reader"
                 temps=$(/usr/bin/time -f "%e" ./philo_TAS $t 2>&1|tail -n 1)
                 moyenne=$(echo "$moyenne+$temps" | bc -l)
                 string_fin="$string_fin,$temps"

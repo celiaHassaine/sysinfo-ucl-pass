@@ -33,29 +33,22 @@ void error(int err, char *msg)
 // Producteur
 void *producer()
 {
-	printf("dans producer\n");
 	int item;
 	int index_write = 0;
 	while (true)
 	{
 		lock(&verrou);
-		printf("dans lock = %d\n", verrou);
 		// section critique
 		if (number_prod == 1024)
 		{
-		printf("dans lock = %d\n", verrou);
 			unlock(&verrou);
-		printf("dans lock\n");
 			semaphore_post(empty);
 			return NULL;
 		}
-		printf("dans lock = %d\n", verrou);
 
 		unlock(&verrou);
-		printf("dans lock = %d\n", verrou);
 		item = MIN_INT + rand() % (MAX_INT - MIN_INT + 1);
 		semaphore_wait(empty); // attente d'une place libre
-		printf("dans lock = %d\n", verrou);
 		lock(&verrou);
 		// section critique
 		if (number_prod == 1024)
@@ -75,7 +68,6 @@ void *producer()
 // Consomateur
 void *consumer()
 {
-	printf("dans consumer\n");
 	int item;
 	int index_read = 0;
 	while (true)
@@ -109,6 +101,8 @@ void *consumer()
 
 int main(int argc, char **argv)
 {
+
+	printf("HI\n");
 	int err_consommateur;
 	int err_producteur;
 

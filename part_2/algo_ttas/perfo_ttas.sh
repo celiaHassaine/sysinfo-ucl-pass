@@ -30,7 +30,7 @@ do
         fi
         string_fin="$t"
         moyenne=0
-        if ((${prog_names[$i]} == "prod"))
+        if [ "${prog_names[$i]}" = "prod" ]
         then
             for ((repeat=0; repeat<5; repeat++))
             do
@@ -38,7 +38,7 @@ do
                 moyenne=$(echo "$moyenne+$temps" | bc -l)
                 string_fin="$string_fin,$temps"
             done
-        elif ((${prog_names[$i]} == "reader"))
+        elif [ "${prog_names[$i]}" = "reader" ]
         then
             for ((repeat=0; repeat<5; repeat++))
             do
@@ -46,7 +46,7 @@ do
                 moyenne=$(echo "$moyenne+$temps" | bc -l)
                 string_fin="$string_fin,$temps"
             done
-        elif ((${prog_names[$i]} == "philo"))
+        elif [ "${prog_names[$i]}" = "philo" ]
         then
             for ((repeat=0; repeat<5; repeat++))
             do
