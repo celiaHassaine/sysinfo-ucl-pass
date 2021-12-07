@@ -8,7 +8,6 @@
 #include "semaphore_ttas.h"
 
 
-#define CYCLES 10000
 
 pthread_t *phil;
 int *baguette;
@@ -40,21 +39,21 @@ void* philosophe ( void* arg ){
     }
 
     //Boucle avec le nombre de cycle que l'on veut
-    while(nbCycles < CYCLES){
+    while(nbCycles <= 10000){
         pense(*id);
         //Pour que les philosophes considérent les mutex dans le même ordre
         if(left < right){
-            lock(&baguette[left]);
-            lock(&baguette[right]);
+            lock(baguette[left]);
+            lock(baguette[right]);
         }
         else{
-            lock(&baguette[right]);
-            lock(&baguette[left]);
+            lock(baguette[right]);
+            lock(baguette[left]);
         }
         mange(*id);
         nbCycles++;
-        unlock(&baguette[left]);
-        unlock(&baguette[right]);
+        unlock(baguette[left]);
+        unlock(baguette[right]);
     }
     return (NULL);
 }
