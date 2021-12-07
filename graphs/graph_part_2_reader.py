@@ -25,43 +25,25 @@ ecart_ttas=pd.read_csv(files_csv[2], usecols=['sec_1', 'sec_2', 'sec_3', 'sec_4'
 
 
 plt.figure(figsize=(14.8, 12.2))
-plt.title('measuresements of time through the philo algorithm')
+plt.title('measuresements of time through the reader algorithm')
 
 x = range(len(data_normal['thread']))
 plt.plot(x, data_normal['moyenne'])
-plt.errorbar(x, data_normal['moyenne'], get_std(ecart_normal), capsize=10, fmt=' ', ecolor='green')
+plt.errorbar(x, data_normal['moyenne'], get_std(ecart_normal), capsize=10)
 plt.xticks(x, data_normal['thread'])
-plt.xlabel('number of threads')
-plt.ylabel('average time to execute')
-plt.ylim(ymin=0)
-plt.legend(["reader moyenne", "reader ecart-type"])
-"""
-plt.figure().clear()
 
-plt.figure(figsize=(14.8, 12.2))
-plt.title('measuresements of time through 3 different algorithm')
-"""
 x = range(len(data_TAS['thread']))
 plt.plot(x, data_TAS['moyenne'])
-plt.errorbar(x, data_TAS['moyenne'], get_std(ecart_TAS), capsize=10, fmt=' ', ecolor='red')
+plt.errorbar(x, data_TAS['moyenne'], get_std(ecart_TAS), capsize=10)
 plt.xticks(x, data_TAS['thread'])
-plt.xlabel('number of threads')
-plt.ylabel('average time to execute')
-plt.ylim(ymin=0)
-plt.legend(["reader TAS moyenne", "reader TAS ecart-type"])
-"""
-plt.figure().clear()
 
-plt.figure(figsize=(14.8, 12.2))
-plt.title('measuresements of time through 3 different algorithm')
-"""
 x = range(len(data_ttas['thread']))
 plt.plot(x, data_ttas['moyenne'])
-plt.errorbar(x, data_ttas['moyenne'], get_std(ecart_ttas), capsize=10, fmt=' ', ecolor='blue')
+plt.errorbar(x, data_ttas['moyenne'], get_std(ecart_ttas), capsize=10)
 plt.xticks(x, data_ttas['thread'])
 
 plt.xlabel('number of threads')
 plt.ylabel('average time to execute')
 plt.ylim(ymin=0)
-plt.legend(["reader ttas moyenne", "reader ttas ecart-type"])
+plt.legend(["reader", "reader TAS", "reader ttas"])
 plt.savefig('graphs/graph_reader_ttas.png')

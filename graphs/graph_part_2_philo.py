@@ -29,39 +29,21 @@ plt.title('measuresements of time through the philo algorithm')
 
 x = range(len(data_normal['thread']))
 plt.plot(x, data_normal['moyenne'])
-plt.errorbar(x, data_normal['moyenne'], get_std(ecart_normal), capsize=10, fmt=' ', ecolor='green')
+plt.errorbar(x, data_normal['moyenne'], get_std(ecart_normal), capsize=10)
 plt.xticks(x, data_normal['thread'])
-plt.xlabel('number of threads')
-plt.ylabel('average time to execute')
-plt.ylim(ymin=0)
-plt.legend(["philo moyenne", "philo ecart-type"])
-"""
-plt.figure().clear()
 
-plt.figure(figsize=(14.8, 12.2))
-plt.title('measuresements of time through 3 different algorithm')
-"""
 x = range(len(data_TAS['thread']))
 plt.plot(x, data_TAS['moyenne'])
-plt.errorbar(x, data_TAS['moyenne'], get_std(ecart_TAS), capsize=10, fmt=' ', ecolor='red')
+plt.errorbar(x, data_TAS['moyenne'], get_std(ecart_TAS), capsize=10)
 plt.xticks(x, data_TAS['thread'])
-plt.xlabel('number of threads')
-plt.ylabel('average time to execute')
-plt.ylim(ymin=0)
-plt.legend(["philo TAS moyenne", "philo TAS ecart-type"])
-"""
-plt.figure().clear()
 
-plt.figure(figsize=(14.8, 12.2))
-plt.title('measuresements of time through 3 different algorithm')
-"""
 x = range(len(data_ttas['thread']))
 plt.plot(x, data_ttas['moyenne'])
-plt.errorbar(x, data_ttas['moyenne'], get_std(ecart_ttas), capsize=10, fmt=' ', ecolor='blue')
+plt.errorbar(x, data_ttas['moyenne'], get_std(ecart_ttas), capsize=10)
 plt.xticks(x, data_ttas['thread'])
 
 plt.xlabel('number of threads')
 plt.ylabel('average time to execute')
 plt.ylim(ymin=0)
-plt.legend(["philo ttas moyenne", "philo ttas ecart-type"])
+plt.legend(["philo", "philo TAS", "philo ttas"])
 plt.savefig('graphs/graph_philo_ttas.png')
