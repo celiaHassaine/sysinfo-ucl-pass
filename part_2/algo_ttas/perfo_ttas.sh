@@ -59,11 +59,22 @@ do
             done
         fi
         #getting the average time out of 5
-        moyenne=$(echo "$moyenne/5" | bc -l);
-        moyenne=","${moyenne:1}
-        moyenne="0$moyenne"
-        moyenne=$(printf "%.3f" $moyenne)
-        moyenne=${moyenne//[,]/.}
+        if [ "${moyenne:0:1}" = "." ]
+        then
+            moyenne=$(echo "$moyenne/5" | bc -l);
+            moyenne=","${moyenne:1}
+            moyenne="0$moyenne"
+            moyenne=$(printf "%.3f" $moyenne)
+            moyenne=${moyenne//[,]/.}
+        else
+            moyenne=$(echo "$moyenne/5" | bc -l);
+            if [ "${moyenne:0:1}" = "." ]
+            then
+                moyenne="0$moyenne"
+            fi    
+            moyenne=${moyenne:0:5}
+            moyenne=${moyenne//[,]/.}
+        fi
 
         string_fin="$string_fin,$moyenne"
         echo $string_fin >> mesures_${prog_names[$i]}.csv

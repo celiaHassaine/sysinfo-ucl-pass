@@ -11,7 +11,7 @@ nbr_coeur=4
 prod_writer=0
 cons_reader=0
 
-for ((i=0; i<3; i++))
+for ((i=0; i<1; i++))
 do
 	echo "thread,sec_1,sec_2,sec_3,sec_4,sec_5,moyenne" > mesures_${prog_names[$i]}.csv
     for ((t=1; t<($nbr_coeur*2)+1; t++))
@@ -45,7 +45,6 @@ do
         then
             for ((repeat=0; repeat<5; repeat++))
             do  
-                ${prog_names[$i]}
                 temps=$(/usr/bin/time -f "%e" ./reader $prod_writer $cons_reader 2>&1|tail -n 1)
                 moyenne=$(echo "$moyenne+$temps" | bc -l)
                 string_fin="$string_fin,$temps"
@@ -62,11 +61,22 @@ do
             done
         fi
         #getting the average time out of 5
-        moyenne=$(echo "$moyenne/5" | bc -l);
-        moyenne=","${moyenne:1}
-        moyenne="0$moyenne"
-        moyenne=$(printf "%.3f" $moyenne)
-        moyenne=${moyenne//[,]/.}
+        if [ "${moyenne:0:1}" = "." ]
+        then
+            moyenne=$(echo "$moyenne/5" | bc -l);
+            moyenne=","${moyenne:1}
+            moyenne="0$moyenne"
+            moyenne=$(printf "%.3f" $moyenne)
+            moyenne=${moyenne//[,]/.}
+        else
+            moyenne=$(echo "$moyenne/5" | bc -l);
+            if [ "${moyenne:0:1}" = "." ]
+            then
+                moyenne="0$moyenne"
+            fi    
+            moyenne=${moyenne:0:5}
+            moyenne=${moyenne//[,]/.}
+        fi
 
         string_fin="$string_fin,$moyenne"
         echo $string_fin >> mesures_${prog_names[$i]}.csv
