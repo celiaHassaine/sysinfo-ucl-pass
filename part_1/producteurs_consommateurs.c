@@ -40,13 +40,16 @@ void *producer()
 		// section critique
 		if (number_prod == 1024)
 		{
+			//printf("dans le IF nbr_PROD: %d\n", number_prod);
 			pthread_mutex_unlock(&mutex);
 			sem_post(&empty);
+			//printf("nbr_PROD: %d\n", number_prod);
 			return NULL;
 		}
 
 		pthread_mutex_unlock(&mutex);
 		item = MIN_INT + rand() % (MAX_INT - MIN_INT + 1);
+		//printf("PROD_EMPTY: %d\n", number_prod);
 		sem_wait(&empty); // attente d'une place libre
 		pthread_mutex_lock(&mutex);
 		// section critique
@@ -75,11 +78,14 @@ void *consumer()
 		// section critique
 		if (number_cons == 1024)
 		{
+			printf("CONS: \tdans le IF: %d\n", number_cons);
 			pthread_mutex_unlock(&mutex);
 			sem_post(&full);
+			printf("CONS: \tAVANT le RETURN NULL sem_val: %d\n");
 			return NULL;
 		}
 		pthread_mutex_unlock(&mutex);
+		printf("FULL_cons: \ttesting before wait %d\n", full);
 		sem_wait(&full); // attente d'une place remplie
 		pthread_mutex_lock(&mutex);
 		// section critique
@@ -89,8 +95,7 @@ void *consumer()
 			sem_post(&full);
 			return NULL;
 		}
-		while (rand() > RAND_MAX / 10000)
-			;
+		while (rand() > RAND_MAX / 10000);
 		index_read = (index_read + 1) % 8;
 		number_cons++;
 		pthread_mutex_unlock(&mutex);
@@ -132,7 +137,6 @@ int main(int argc, char **argv)
 		if (err_consommateur != 0)
 			error(err_consommateur, "pthread_create_consom");
 	}
-
 	//creation des threads producteurs
 	for (long i = 0; i < nbr_producteur; i++)
 	{

@@ -50,22 +50,33 @@ test_test_and_set:
 	gcc -pthread part_2/test-test-and-set.c -lpthread -o test_test_and_set
 
 sema:
-	gcc -pthread part_2/semaphore.c -lpthread -o sema
+	gcc -pthread part_2/algo_ttas/semaphore_ttas.c -lpthread -o sema
 
-#graphs: graph_normal
-#	python3 python_scripts/plots_spinlock.py
+graph_algo:
+	python3 graphs/graph_part_2_prod.py
+	python3 graphs/graph_part_2_reader.py
+	python3 graphs/graph_part_2_philo.py
 
-#graph_spinlock:
-#	python3 python_scripts/plots_spinlock.py
-
-#graph_both:
-#	python3 python_scripts/plots_both.py
-
-graph_normal: 
+graph_part_1: 
 	python3 graphs/graph.py
 
 graph_tas:
 	python3 graphs/graph_test_and_set.py
+
+graphs_algo_tas:
+	python3 graphs/graph_part_2_prod.py
+	python3 graphs/graph_part_2_reader.py
+	python3 graphs/graph_part_2_philo.py
+	python3 graphs/graph_test_and_set.py
+
+graphs_prod:
+	python3 graphs/graph_part_2_prod.py
+
+graphs_philo:
+	python3 graphs/graph_part_2_philo.py
+
+graphs_reader:
+	python3 graphs/graph_part_2_reader.py
   
 
 

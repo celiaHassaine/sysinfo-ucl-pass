@@ -1,6 +1,6 @@
 #!/bin/bash
 make clean -s 2>1&>/dev/null
-make clean_csv -s 2>1&>/dev/null
+#make clean_csv -s 2>1&>/dev/null
 make prod_ttas -s 2>1&>/dev/null
 make reader_ttas -s 2>1&>/dev/null
 make philo_ttas -s 2>1&>/dev/null
@@ -13,7 +13,7 @@ cons_reader=0
 
 for ((i=0; i<3; i++))
 do
-	echo "thread,sec_1,sec_2,sec_3,sec_4,sec_5,moyenne" >> mesures_${prog_names[$i]}.csv
+	echo "thread,sec_1,sec_2,sec_3,sec_4,sec_5,moyenne" > mesures_${prog_names[$i]}.csv
     for ((t=1; t<($nbr_coeur*2)+1; t++))
     do
         if (($t%2 == 0))
@@ -30,15 +30,18 @@ do
         fi
         string_fin="$t"
         moyenne=0
-        if [ "${prog_names[$i]}" = "prod" ]
+        if [ "${prog_names[$i]}" = "prod_ttas" ]
         then
             for ((repeat=0; repeat<5; repeat++))
             do
+                echo "beginning"
+                #./prod_ttas $prod_writer $cons_reader
                 temps=$(/usr/bin/time -f "%e" ./prod_ttas $prod_writer $cons_reader 2>&1|tail -n 1)
                 moyenne=$(echo "$moyenne+$temps" | bc -l)
+                echo $temps
                 string_fin="$string_fin,$temps"
             done
-        elif [ "${prog_names[$i]}" = "reader" ]
+        elif [ "${prog_names[$i]}" = "reader_ttas" ]
         then
             for ((repeat=0; repeat<5; repeat++))
             do
@@ -46,7 +49,7 @@ do
                 moyenne=$(echo "$moyenne+$temps" | bc -l)
                 string_fin="$string_fin,$temps"
             done
-        elif [ "${prog_names[$i]}" = "philo" ]
+        elif [ "${prog_names[$i]}" = "philo_ttas" ]
         then
             for ((repeat=0; repeat<5; repeat++))
             do

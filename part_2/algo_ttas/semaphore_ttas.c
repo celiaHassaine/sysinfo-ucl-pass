@@ -57,7 +57,7 @@ void semaphore_wait(sem *s){
     while(s->val <= 0);
     //printf("%ls\n", test);
 	lock(test);
-	s->val--;
+	--s->val;
 	unlock(test);
 }
 
@@ -65,7 +65,7 @@ void semaphore_wait(sem *s){
 void semaphore_post(sem *s){
     int volatile *test = s->verrou;
     lock(test);
-    s->val = s->val+1; //Incrémente la valeur du sémaphore
+    ++s->val; //Incrémente la valeur du sémaphore
     unlock(test);
 }
 

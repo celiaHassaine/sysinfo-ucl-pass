@@ -6,7 +6,7 @@
 //#include <semaphore.h>
 #include <errno.h>
 #include <string.h>
-#include "semaphore.h"
+#include "semaphore_ttas.h"
 
 pthread_mutex_t m_reader;
 pthread_mutex_t m_writer;

@@ -28,40 +28,25 @@ plt.figure(figsize=(14.8, 12.2))
 plt.title('measuresements of time through the prod algorithm')
 
 x = range(len(data_prod_normal['thread']))
-plt.plot(x, data_prod_normal['moyenne'])
-plt.errorbar(x, data_prod_normal['moyenne'], get_std(ecart_prod_normal), capsize=10, fmt=' ', ecolor='green')
+"""plt.plot(x, data_prod_normal['moyenne'])"""
+plt.errorbar(x, data_prod_normal['moyenne'], get_std(ecart_prod_normal), capsize=10)
 plt.xticks(x, data_prod_normal['thread'])
-plt.xlabel('number of threads')
-plt.ylabel('average time to execute')
-plt.ylim(ymin=0)
-plt.legend(["prod moyenne", "prod ecart-type"])
-"""
-plt.figure().clear()
 
-plt.figure(figsize=(14.8, 12.2))
-plt.title('measuresements of time through 3 different algorithm')
-"""
+
 x = range(len(data_prod_TAS['thread']))
-plt.plot(x, data_prod_TAS['moyenne'])
-plt.errorbar(x, data_prod_TAS['moyenne'], get_std(ecart_prod_TAS), capsize=10, fmt=' ', ecolor='red')
+"""plt.plot(x, data_prod_TAS['moyenne'])"""
+plt.errorbar(x, data_prod_TAS['moyenne'], get_std(ecart_prod_TAS), capsize=10)
 plt.xticks(x, data_prod_TAS['thread'])
-plt.xlabel('number of threads')
-plt.ylabel('average time to execute')
-plt.ylim(ymin=0)
-plt.legend(["prod TAS moyenne", "prod TAS ecart-type"])
-"""
-plt.figure().clear()
 
-plt.figure(figsize=(14.8, 12.2))
-plt.title('measuresements of time through 3 different algorithm')
-"""
 x = range(len(data_prod_ttas['thread']))
-plt.plot(x, data_prod_ttas['moyenne'])
-plt.errorbar(x, data_prod_ttas['moyenne'], get_std(ecart_prod_ttas), capsize=10, fmt=' ', ecolor='blue')
+"""plt.plot(x, data_prod_ttas['moyenne'])"""
+plt.errorbar(x, data_prod_ttas['moyenne'], get_std(ecart_prod_ttas), capsize=10)
 plt.xticks(x, data_prod_ttas['thread'])
 
 plt.xlabel('number of threads')
 plt.ylabel('average time to execute')
 plt.ylim(ymin=0)
-plt.legend(["prod ttas moyenne", "prod ttas ecart-type"])
-plt.savefig('graphs/graph_prod_ttas.png')
+plt.legend(["prod", "prod TAS", "prod ttas"])
+plt.savefig('graphs/graphs_png/graph_prod.png')
+
+plt.show()

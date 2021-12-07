@@ -1,6 +1,6 @@
 #!/bin/bash
 make clean -s 2>1&>/dev/null
-make clean_csv -s 2>1&>/dev/null
+#make clean_csv -s 2>1&>/dev/null
 make prod_TAS -s 2>1&>/dev/null
 make reader_TAS -s 2>1&>/dev/null
 make philo_TAS -s 2>1&>/dev/null
@@ -13,8 +13,7 @@ cons_reader=0
 
 for ((i=0; i<3; i++))
 do
-    echo ${prog_names[$i]}
-	echo "thread,sec_1,sec_2,sec_3,sec_4,sec_5,moyenne" >> mesures_${prog_names[$i]}.csv
+	echo "thread,sec_1,sec_2,sec_3,sec_4,sec_5,moyenne" > mesures_${prog_names[$i]}.csv
     for ((t=1; t<($nbr_coeur*2)+1; t++))
     do
         echo $t
@@ -31,23 +30,23 @@ do
             cons_reader=$(echo "($t+1)/2" | bc)
         fi
         string_fin="$t"
-        moyenne=0
+        moyenne=0 
         if [ "${prog_names[$i]}" = "prod_TAS" ]
         then
             for ((repeat=0; repeat<5; repeat++))
             do
-                echo ${prog_names[$i]}
-                echo "here prod = $prod_writer,     cons = $cons_reader"
+                echo "./prod $prod_writer $cons_reader"
+                echo "$t ERE FOIS"
+                #./prod_TAS $prod_writer $cons_reader
                 temps=$(/usr/bin/time -f "%e" ./prod_TAS $prod_writer $cons_reader 2>&1|tail -n 1)
-                moyenne=$(echo "$moyenne+$temps" | bc -l)
                 echo $temps
+                moyenne=$(echo "$moyenne+$temps" | bc -l)
                 string_fin="$string_fin,$temps"
             done
         elif [ "${prog_names[$i]}" = "reader_TAS" ]
         then
             for ((repeat=0; repeat<5; repeat++))
             do
-                echo "here prod = $prod_writer,     cons = $cons_reader"
                 temps=$(/usr/bin/time -f "%e" ./reader_TAS $prod_writer $cons_reader 2>&1|tail -n 1)
                 moyenne=$(echo "$moyenne+$temps" | bc -l)
                 string_fin="$string_fin,$temps"
@@ -56,7 +55,6 @@ do
         then
             for ((repeat=0; repeat<5; repeat++))
             do
-                echo "here prod = $prod_writer,     cons = $cons_reader"
                 temps=$(/usr/bin/time -f "%e" ./philo_TAS $t 2>&1|tail -n 1)
                 moyenne=$(echo "$moyenne+$temps" | bc -l)
                 string_fin="$string_fin,$temps"

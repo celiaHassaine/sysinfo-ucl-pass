@@ -21,9 +21,7 @@ void init_lock(int volatile *verrou){
 //Fonction lock
 void lock(int volatile *verrou){
     int t=1;
-    printf("hello\n");
     while(t == 1){
-        printf("t = %d\n", *verrou);
         asm volatile ("movl $1, %%eax;"
         "xchgl %%eax, %1;"
         "movl %%eax, %0"
@@ -55,12 +53,11 @@ int semaphore_init(sem *s, int v){
 
 void semaphore_wait(sem *s){
     int volatile *test = s->verrou;
-    printf("%d\t%d\n", *(s->verrou), s->val);
+    //printf("VALEUR SEMAPHORE\t%d\n", s->val);
     while(s->val <= 0);
-    //printf("%ls\n", test);
 	lock(test);
-    printf("%d\n", s->val);
-	s->val--;
+    //printf("lock inside sem_wait : %d\n", s->val);
+	--s->val;
 	unlock(test);
 }
 
@@ -68,15 +65,16 @@ void semaphore_wait(sem *s){
 void semaphore_post(sem *s){
     int volatile *test = s->verrou;
     lock(test);
-    s->val = s->val+1; //Incrémente la valeur du sémaphore
+    ++s->val; //Incrémente la valeur du sémaphore
+    //printf("lock inside SEMPOST : %d\n", s->val);
     unlock(test);
 }
 
 
 
 void semaphore_destroy(sem *s){
-    /*int volatile *test = s->verrou;
-    free(&test);*/
+    int volatile *test = s->verrou;
+    free(test);
     free(s);
 }
 /*

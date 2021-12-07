@@ -1,10 +1,11 @@
 #!/bin/bash
 make clean -s 2>1&>/dev/null
-make clean_csv -s 2>1&>/dev/null
+#make clean_csv -s 2>1&>/dev/null
 make prod -s 2>1&>/dev/null
 make reader -s 2>1&>/dev/null
 make philo -s 2>1&>/dev/null
 
+#prog_names=("prod" "philo" "reader")
 prog_names=("prod" "reader")
 
 nbr_coeur=4
@@ -13,7 +14,7 @@ cons_reader=0
 
 for ((i=0; i<2; i++))
 do
-	echo "thread,sec_1,sec_2,sec_3,sec_4,sec_5,moyenne" >> mesures_${prog_names[$i]}.csv
+	echo "thread,sec_1,sec_2,sec_3,sec_4,sec_5,moyenne" > mesures_${prog_names[$i]}.csv
     for ((t=1; t<($nbr_coeur*2)+1; t++))
     do
         echo $t
@@ -38,6 +39,7 @@ do
         then
             for ((repeat=0; repeat<5; repeat++))
             do
+                #./prod $prod_writer $cons_reader
                 temps=$(/usr/bin/time -f "%e" ./prod $prod_writer $cons_reader 2>&1|tail -n 1)
                 moyenne=$(echo "$moyenne+$temps" | bc -l)
                 string_fin="$string_fin,$temps"

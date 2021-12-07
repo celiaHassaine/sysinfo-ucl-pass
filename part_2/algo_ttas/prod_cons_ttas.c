@@ -6,7 +6,7 @@
 #include <math.h>
 #include <errno.h>
 #include <string.h>
-#include "semaphore_tas.h"
+#include "semaphore_ttas.h"
 
 // Initialisation
 #define MIN_INT -2147483648
@@ -22,7 +22,7 @@ int BUFFER[N];
 
 int number_prod = 0;
 int number_cons = 0;
-int volatile verrou;
+pthread_mutex_t verrou;
 
 void error(int err, char *msg)
 {
@@ -37,30 +37,31 @@ void *producer()
 	int index_write = 0;
 	while (true)
 	{
-		lock(&verrou);
+		pthread_mutex_lock(&verrou);
 		// section critique
 		if (number_prod == 1024)
 		{
-			unlock(&verrou);
+			printf("PROD: \tdans le IF: %d\n", number_prod);
+			pthread_mutex_unlock(&verrou);
 			semaphore_post(empty);
-			return NULL;
+			break;
 		}
-
-		unlock(&verrou);
+		pthread_mutex_unlock(&verrou);
 		item = MIN_INT + rand() % (MAX_INT - MIN_INT + 1);
+		printf("EMPTY_PROD: \ttesting before wait %d, nbr producteur: %d\n", empty->val, number_prod);
 		semaphore_wait(empty); // attente d'une place libre
-		lock(&verrou);
+		pthread_mutex_lock(&verrou);
 		// section critique
 		if (number_prod == 1024)
 		{
-			unlock(&verrou);
+			pthread_mutex_unlock(&verrou);
 			semaphore_post(empty);
-			return NULL;
+			break;
 		}
 		BUFFER[index_write] = item;
 		index_write = (index_write + 1) % 8;
 		number_prod++;
-		unlock(&verrou);
+		pthread_mutex_unlock(&verrou);
 		semaphore_post(full); // il y a une place remplie en plus
 	}
 }
@@ -72,38 +73,41 @@ void *consumer()
 	int index_read = 0;
 	while (true)
 	{
-		lock(&verrou);
+		//printf("CONSUMMER: %d\n", number_cons);
+		pthread_mutex_lock(&verrou);
 		// section critique
 		if (number_cons == 1024)
 		{
-			unlock(&verrou);
+			printf("CONS: \tdans le IF: %d\n", number_cons);
+			pthread_mutex_unlock(&verrou);
 			semaphore_post(full);
-			return NULL;
+			break;
 		}
-		unlock(&verrou);
+		pthread_mutex_unlock(&verrou);
+		printf("FULL_cons: \ttesting before wait %d, nbr cons: %d\n", full->val, number_cons);
 		semaphore_wait(full); // attente d'une place remplie
-		lock(&verrou);
+		pthread_mutex_lock(&verrou);
 		// section critique
 		if (number_cons == 1024)
 		{
-			unlock(&verrou);
+			pthread_mutex_unlock(&verrou);
 			semaphore_post(full);
-			return NULL;
+			break;
 		}
 		while (rand() > RAND_MAX / 10000)
 			;
 		index_read = (index_read + 1) % 8;
 		number_cons++;
-		unlock(&verrou);
+		pthread_mutex_unlock(&verrou);
 		semaphore_post(empty); // il y a une place libre en plus
 	}
 }
 
 int main(int argc, char **argv)
 {
-	printf("hi\n");
 	int err_consommateur;
 	int err_producteur;
+	int err;
 
 	int nbr_producteur = atoi(argv[1]);
 	int nbr_consommateur = atoi(argv[2]);
@@ -113,11 +117,18 @@ int main(int argc, char **argv)
 
 	int arg_producteur[nbr_producteur];
 	int arg_consommateur[nbr_consommateur];
-	printf("hi\n");
 
-	init_lock(&verrou);
+	err = pthread_mutex_init( &verrou, NULL);
+      if(err !=0){
+        error(err,"pthread_mutex_init");
+      }
 
-	semaphore_init(empty, 0); // buffer vide
+    empty=malloc(sizeof(sem));
+    (*empty).verrou = malloc(sizeof(int volatile));
+    full=malloc(sizeof(sem));
+    (*full).verrou = malloc(sizeof(int volatile));
+
+	semaphore_init(empty, N); // buffer vide
 	semaphore_init(full, 0);	// buffer vide
 
 	//creation des threads consommateurs
@@ -141,8 +152,6 @@ int main(int argc, char **argv)
 	// attendre les threads producteurs
 	for (int i = 0; i < nbr_producteur; i++)
 	{
-		printf("hi from inside\n");
-
 		err_producteur = pthread_join(threads_producteur[i], NULL);
 
 		if (err_producteur != 0)
@@ -161,7 +170,12 @@ int main(int argc, char **argv)
 
 	semaphore_destroy(empty);
 
-	semaphore_destroy(full);
+    err = pthread_mutex_destroy(&verrou);
+    if(err!=0)
+	      error(err,"pthread_mutex_destroy");
 
-	return (EXIT_SUCCESS);*/
+	semaphore_destroy(full);
+	printf("END\n");
+
+	return (EXIT_SUCCESS);
 }

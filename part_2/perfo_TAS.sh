@@ -1,6 +1,6 @@
 #!/bin/bash
 make clean -s 2>1&>/dev/null
-make clean_csv -s 2>1&>/dev/null
+#make clean_csv -s 2>1&>/dev/null
 make test_and_set -s 2>1&>/dev/null
 make test_test_and_set -s 2>1&>/dev/null
 
@@ -10,7 +10,7 @@ N=4*2
 
 for ((i=0; i<3; i++))
 do
-	echo "coeur,sec_1,sec_2,sec_3,sec_4,sec_5,moyenne" >> mesures_${prog_names[$i]}.csv
+	echo "coeur,sec_1,sec_2,sec_3,sec_4,sec_5,moyenne" > mesures_${prog_names[$i]}.csv
     for ((t=1; t<$N+1; t++))
     do
         string_fin="$t"
