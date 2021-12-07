@@ -25,20 +25,20 @@ ecart_reader=pd.read_csv(files_csv[2], usecols=['sec_1', 'sec_2', 'sec_3', 'sec_
 
 
 plt.figure(figsize=(14.8, 12.2))
-plt.title('measuresements of time through 3 different algorithm')
+plt.title('measuresements of time through PROD algorithm')
 
 x = range(len(data_prod['thread']))
 plt.plot(x, data_prod['moyenne'])
 plt.errorbar(x, data_prod['moyenne'], get_std(ecart_prod), capsize=10, fmt=' ', ecolor='green')
 plt.xticks(x, data_prod['thread'])
 plt.xlabel('number of threads')
-plt.ylabel('average time to execute')
+plt.ylabel('average time to execute (seconds)')
 plt.ylim(ymin=0)
 plt.legend(["prod-cons moyenne", "prod-cons ecart-type"])
-plt.savefig('graphs/graph_prod.png')
+plt.savefig('graphs/graphs_png/graph_prod_part1.png')
 
 plt.figure().clear()
-
+"""
 plt.figure(figsize=(14.8, 12.2))
 plt.title('measuresements of time through 3 different algorithm')
 
@@ -50,7 +50,7 @@ plt.xlabel('number of threads')
 plt.ylabel('average time to execute')
 plt.ylim(ymin=0)
 plt.legend(["philo moyenne", "philo ecart-type"])
-plt.savefig('graphs/graph_philo.png')
+plt.savefig('graphs/graphs_png/graph_philo_part1.png')
 
 plt.figure().clear()
 
@@ -66,4 +66,4 @@ plt.xlabel('number of threads')
 plt.ylabel('average time to execute')
 plt.ylim(ymin=0)
 plt.legend(["reader moyenne", "reader ecart-type"])
-plt.savefig('graphs/graph_reader.png')
+plt.savefig('graphs/graphs_png/graph_reader_part1.png')"""

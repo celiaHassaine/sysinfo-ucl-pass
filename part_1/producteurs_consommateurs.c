@@ -29,7 +29,7 @@ void error(int err, char *msg)
 	exit(EXIT_FAILURE);
 }
 
-// Producteur
+// Producer
 void *producer()
 {
 	int item;
@@ -37,20 +37,16 @@ void *producer()
 	while (true)
 	{
 		pthread_mutex_lock(&mutex);
-		// section critique
 		if (number_prod == 1024)
 		{
-			//printf("dans le IF nbr_PROD: %d\n", number_prod);
 			pthread_mutex_unlock(&mutex);
 			sem_post(&empty);
-			//printf("nbr_PROD: %d\n", number_prod);
 			return NULL;
 		}
 
 		pthread_mutex_unlock(&mutex);
 		item = MIN_INT + rand() % (MAX_INT - MIN_INT + 1);
-		//printf("PROD_EMPTY: %d\n", number_prod);
-		sem_wait(&empty); // attente d'une place libre
+		sem_wait(&empty); // waiting for a free spot
 		pthread_mutex_lock(&mutex);
 		// section critique
 		if (number_prod == 1024)
@@ -63,11 +59,11 @@ void *producer()
 		index_write = (index_write + 1) % 8;
 		number_prod++;
 		pthread_mutex_unlock(&mutex);
-		sem_post(&full); // il y a une place remplie en plus
+		sem_post(&full); // signal that something is ready to be consumed
 	}
 }
 
-// Consomateur
+// Consumer
 void *consumer()
 {
 	int item;
@@ -75,18 +71,14 @@ void *consumer()
 	while (true)
 	{
 		pthread_mutex_lock(&mutex);
-		// section critique
-		if (number_cons == 1024)
+		if (number_cons == 1024) //checking if we arrive at the end of the algo
 		{
-			printf("CONS: \tdans le IF: %d\n", number_cons);
 			pthread_mutex_unlock(&mutex);
 			sem_post(&full);
-			printf("CONS: \tAVANT le RETURN NULL sem_val: %d\n");
 			return NULL;
 		}
 		pthread_mutex_unlock(&mutex);
-		printf("FULL_cons: \ttesting before wait %d\n", full);
-		sem_wait(&full); // attente d'une place remplie
+		sem_wait(&full); // waiting for something to consume
 		pthread_mutex_lock(&mutex);
 		// section critique
 		if (number_cons == 1024)
@@ -99,15 +91,13 @@ void *consumer()
 		index_read = (index_read + 1) % 8;
 		number_cons++;
 		pthread_mutex_unlock(&mutex);
-		sem_post(&empty); // il y a une place libre en plus
+		sem_post(&empty); // signal one spot is free
 	}
 }
 
 int main(int argc, char **argv)
 {
-	int err_mutex;
-	int err_consommateur;
-	int err_producteur;
+	int err;
 
 	int nbr_producteur = atoi(argv[1]);
 	int nbr_consommateur = atoi(argv[2]);
@@ -120,56 +110,57 @@ int main(int argc, char **argv)
 
 	pthread_mutex_init(&mutex, NULL);
 
-	sem_init(&empty, 0, N); // buffer vide
-	sem_init(&full, 0, 0);	// buffer vide
+	sem_init(&empty, 0, N);
+	sem_init(&full, 0, 0);
 
-	err_mutex = pthread_mutex_init(&mutex, NULL);
-	if (err_mutex != 0)
+	err = pthread_mutex_init(&mutex, NULL);
+	if (err != 0)
 	{
-		error(err_mutex, "pthread_read_mutex_init");
+		error(err, "pthread_read_mutex_init");
 	}
 
-	//creation des threads consommateurs
+	//threads consumer
 	for (long i = 0; i < nbr_consommateur; i++)
 	{
 		arg_consommateur[i] = i;
-		err_consommateur = pthread_create(&(threads_consommateur[i]), NULL, consumer, NULL);
-		if (err_consommateur != 0)
-			error(err_consommateur, "pthread_create_consom");
+		err = pthread_create(&(threads_consommateur[i]), NULL, consumer, NULL);
+		if (err != 0)
+			error(err, "pthread_create_consom");
 	}
-	//creation des threads producteurs
+
+	//threads producer
 	for (long i = 0; i < nbr_producteur; i++)
 	{
 		arg_producteur[i] = i;
-		err_producteur = pthread_create(&(threads_producteur[i]), NULL, producer, NULL);
-		if (err_producteur != 0)
-			error(err_producteur, "pthread_create_producer");
+		err = pthread_create(&(threads_producteur[i]), NULL, producer, NULL);
+		if (err != 0)
+			error(err, "pthread_create_producer");
 	}
 
-	// attendre les threads producteurs
+	// joining threads producer
 	for (int i = 0; i < nbr_producteur; i++)
 	{
 
-		err_producteur = pthread_join(threads_producteur[i], NULL);
+		err = pthread_join(threads_producteur[i], NULL);
 
-		if (err_producteur != 0)
-			error(err_producteur, "pthread_join");
+		if (err != 0)
+			error(err, "pthread_join");
 	}
 
-	// attendre les threads consommateurs
+	//destroying sem and mutex
 	for (int i = 0; i < nbr_consommateur; i++)
 	{
 
-		err_consommateur = pthread_join(threads_consommateur[i], NULL);
+		err = pthread_join(threads_consommateur[i], NULL);
 
-		if (err_consommateur != 0)
-			error(err_consommateur, "pthread_join");
+		if (err != 0)
+			error(err, "pthread_join");
 	}
 
-	err_mutex = pthread_mutex_destroy(&mutex);
-	if (err_mutex != 0)
+	err = pthread_mutex_destroy(&mutex);
+	if (err != 0)
 	{
-		error(err_mutex, "pthread_mutex_destroy");
+		error(err, "pthread_mutex_destroy");
 	}
 
 	return (EXIT_SUCCESS);

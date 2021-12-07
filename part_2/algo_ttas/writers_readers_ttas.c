@@ -33,6 +33,7 @@ void read_database(){}
 void *writer(){
     int writing = 0;
     while(writing < 640){
+        printf("nombre de writing: %d\n", writing);
         pthread_mutex_lock(&m_writer);
         //section critique - writecount
         writecount=writecount+1;
@@ -60,6 +61,7 @@ void *writer(){
 void *reader (){
     int reading = 0;
     while(reading < 2560){
+        //printf("nombre de reading: %d\n", reading);
         pthread_mutex_lock(&mutex3);
         //exlusion mutuelle, un seul reader en attente
         semaphore_wait(db_reader);

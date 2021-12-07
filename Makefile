@@ -58,7 +58,7 @@ graph_algo:
 	python3 graphs/graph_part_2_philo.py
 
 graph_part_1: 
-	python3 graphs/graph.py
+	python3 graphs/graph_part_1.py
 
 graph_tas:
 	python3 graphs/graph_test_and_set.py

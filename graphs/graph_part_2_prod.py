@@ -44,7 +44,7 @@ plt.errorbar(x, data_prod_ttas['moyenne'], get_std(ecart_prod_ttas), capsize=10)
 plt.xticks(x, data_prod_ttas['thread'])
 
 plt.xlabel('number of threads')
-plt.ylabel('average time to execute')
+plt.ylabel('average time to execute (seconds)')
 plt.ylim(ymin=0)
 plt.legend(["prod", "prod TAS", "prod ttas"])
 plt.savefig('graphs/graphs_png/graph_prod.png')

@@ -30,7 +30,7 @@ void error(int err, char *msg)
 	exit(EXIT_FAILURE);
 }
 
-// Producteur
+// Producer
 void *producer()
 {
 	int item;
@@ -38,18 +38,15 @@ void *producer()
 	while (true)
 	{
 		pthread_mutex_lock(&verrou);
-		// section critique
 		if (number_prod == 1024)
 		{
-			printf("PROD: \tdans le IF: %d\n", number_prod);
 			pthread_mutex_unlock(&verrou);
 			semaphore_post(empty);
 			break;
 		}
 		pthread_mutex_unlock(&verrou);
 		item = MIN_INT + rand() % (MAX_INT - MIN_INT + 1);
-		printf("EMPTY_PROD: \ttesting before wait %d, nbr producteur: %d\n", empty->val, number_prod);
-		semaphore_wait(empty); // attente d'une place libre
+		semaphore_wait(empty); // waiting for a free spot
 		pthread_mutex_lock(&verrou);
 		// section critique
 		if (number_prod == 1024)
@@ -62,30 +59,26 @@ void *producer()
 		index_write = (index_write + 1) % 8;
 		number_prod++;
 		pthread_mutex_unlock(&verrou);
-		semaphore_post(full); // il y a une place remplie en plus
+		semaphore_post(full); // signal that something is ready to be consumed
 	}
 }
 
-// Consomateur
+// Consumer
 void *consumer()
 {
 	int item;
 	int index_read = 0;
 	while (true)
 	{
-		//printf("CONSUMMER: %d\n", number_cons);
 		pthread_mutex_lock(&verrou);
-		// section critique
-		if (number_cons == 1024)
+		if (number_cons == 1024) //checking if we arrive at the end of the algo
 		{
-			printf("CONS: \tdans le IF: %d\n", number_cons);
 			pthread_mutex_unlock(&verrou);
 			semaphore_post(full);
 			break;
 		}
 		pthread_mutex_unlock(&verrou);
-		printf("FULL_cons: \ttesting before wait %d, nbr cons: %d\n", full->val, number_cons);
-		semaphore_wait(full); // attente d'une place remplie
+		semaphore_wait(full); // waiting for something to consume
 		pthread_mutex_lock(&verrou);
 		// section critique
 		if (number_cons == 1024)
@@ -99,14 +92,12 @@ void *consumer()
 		index_read = (index_read + 1) % 8;
 		number_cons++;
 		pthread_mutex_unlock(&verrou);
-		semaphore_post(empty); // il y a une place libre en plus
+		semaphore_post(empty); // signal one spot is free
 	}
 }
 
 int main(int argc, char **argv)
 {
-	int err_consommateur;
-	int err_producteur;
 	int err;
 
 	int nbr_producteur = atoi(argv[1]);
@@ -128,46 +119,47 @@ int main(int argc, char **argv)
     full=malloc(sizeof(sem));
     (*full).verrou = malloc(sizeof(int volatile));
 
-	semaphore_init(empty, N); // buffer vide
-	semaphore_init(full, 0);	// buffer vide
+	semaphore_init(empty, N);
+	semaphore_init(full, 0);
 
-	//creation des threads consommateurs
+	//threads consumer
 	for (long i = 0; i < nbr_consommateur; i++)
 	{
 		arg_consommateur[i] = i;
-		err_consommateur = pthread_create(&(threads_consommateur[i]), NULL, consumer, NULL);
-		if (err_consommateur != 0)
-			error(err_consommateur, "pthread_create_consom");
+		err = pthread_create(&(threads_consommateur[i]), NULL, consumer, NULL);
+		if (err != 0)
+			error(err, "pthread_create_consom");
 	}
 
-	//creation des threads producteurs
+	//threads producer
 	for (long i = 0; i < nbr_producteur; i++)
 	{
 		arg_producteur[i] = i;
-		err_producteur = pthread_create(&(threads_producteur[i]), NULL, producer, NULL);
-		if (err_producteur != 0)
-			error(err_producteur, "pthread_create_producer");
+		err = pthread_create(&(threads_producteur[i]), NULL, producer, NULL);
+		if (err != 0)
+			error(err, "pthread_create_producer");
 	}
 
-	// attendre les threads producteurs
+	// joining threads producer
 	for (int i = 0; i < nbr_producteur; i++)
 	{
-		err_producteur = pthread_join(threads_producteur[i], NULL);
+		err = pthread_join(threads_producteur[i], NULL);
 
-		if (err_producteur != 0)
-			error(err_producteur, "pthread_join");
+		if (err != 0)
+			error(err, "pthread_join");
 	}
 
-	// attendre les threads consommateurs
+	// joining threads consumer
 	for (int i = 0; i < nbr_consommateur; i++)
 	{
 
-		err_consommateur = pthread_join(threads_consommateur[i], NULL);
+		err = pthread_join(threads_consommateur[i], NULL);
 
-		if (err_consommateur != 0)
-			error(err_consommateur, "pthread_join");
+		if (err != 0)
+			error(err, "pthread_join");
 	}
 
+	//destroying sem and mutex
 	semaphore_destroy(empty);
 
     err = pthread_mutex_destroy(&verrou);
@@ -175,7 +167,6 @@ int main(int argc, char **argv)
 	      error(err,"pthread_mutex_destroy");
 
 	semaphore_destroy(full);
-	printf("END\n");
 
 	return (EXIT_SUCCESS);
 }
